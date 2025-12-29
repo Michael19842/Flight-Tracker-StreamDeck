@@ -11,17 +11,17 @@ namespace FlightStreamDeck.Logics.Actions;
 public class PresetToggleSettings
 {
     [JsonProperty(nameof(Type))]
-    public string Type { get; set; }
+    public string Type { get; set; } = "";
     [JsonProperty(nameof(HideHeader))]
     public bool HideHeader { get; set; }
     [JsonProperty(nameof(FontSize))]
-    public string FontSize { get; set; }
+    public string FontSize { get; set; } = "";
     [JsonProperty(nameof(ImageOn))]
-    public string ImageOn { get; set; }
+    public string ImageOn { get; set; } = "";
     [JsonProperty(nameof(ImageOn_base64))]
     public string? ImageOn_base64 { get; set; }
     [JsonProperty(nameof(ImageOff))]
-    public string ImageOff { get; set; }
+    public string ImageOff { get; set; } = "";
     [JsonProperty(nameof(ImageOff_base64))]
     public string? ImageOff_base64 { get; set; }
 }

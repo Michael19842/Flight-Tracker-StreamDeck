@@ -25,7 +25,7 @@ public class ValueDecreaseAction : PresetChangeAction
 
 public class ValueChangeSettings
 {
-    public string Type { get; set; }
+    public string Type { get; set; } = "";
 }
 
 public abstract class PresetChangeAction : BaseAction<ValueChangeSettings>

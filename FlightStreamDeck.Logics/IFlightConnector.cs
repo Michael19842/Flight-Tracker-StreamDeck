@@ -9,6 +9,7 @@ public interface IFlightConnector
     event EventHandler<ToggleValueUpdatedEventArgs> GenericValuesUpdated;
     event EventHandler<InvalidEventRegisteredEventArgs> InvalidEventRegistered;
 
+    // Autopilot Controls
     void ApOff();
     void ApOn();
     void ApToggle();
@@ -36,12 +37,126 @@ public interface IFlightConnector
     void ApAirSpeedSet(uint speed);
     void ApAirSpeedInc();
     void ApAirSpeedDec();
+
+    // Barometric/QNH Controls
     void QNHSet(uint qnh);
     void QNHInc();
     void QNHDec();
 
+    // Avionics
     void AvMasterToggle(uint state);
-
+    void AvionicsMaster1On();
+    void AvionicsMaster1Off();
+    void AvionicsMaster2On();
+    void AvionicsMaster2Off();
+    
+    // Engine Controls
+    void EngineAutoStart();
+    void EngineAutoShutdown();
+    void ThrottleFull();
+    void ThrottleIncr();
+    void ThrottleIncrSmall();
+    void ThrottleDecr();
+    void ThrottleDecrSmall();
+    void ThrottleCut();
+    void ThrottleSet(uint percent);
+    void Throttle1Set(uint percent);
+    void Throttle2Set(uint percent);
+    void Throttle3Set(uint percent);
+    void Throttle4Set(uint percent);
+    
+    // Propeller Controls
+    void PropPitchIncr();
+    void PropPitchDecr();
+    void PropPitchHi();
+    void PropPitchLo();
+    void PropPitchSet(uint percent);
+    
+    // Mixture Controls
+    void MixtureRich();
+    void MixtureLean();
+    void MixtureIncr();
+    void MixtureDecr();
+    void MixtureSet(uint percent);
+    
+    // Magneto/Ignition
+    void MagnetoOff();
+    void MagnetoRight();
+    void MagnetoLeft();
+    void MagnetoBoth();
+    void MagnetoStart();
+    void MagnetoSet(uint position);
+    
+    // Flight Controls
+    void ElevTrimUp();
+    void ElevTrimDown();
+    void ElevTrimSet(uint position);
+    void AileronTrimLeft();
+    void AileronTrimRight();
+    void RudderTrimLeft();
+    void RudderTrimRight();
+    
+    // Flaps & Gear
+    void FlapsUp();
+    void FlapsDown();
+    void FlapsSet(uint position);
+    void GearToggle();
+    void GearUp();
+    void GearDown();
+    void SpoilersToggle();
+    
+    // Brakes
+    void Brakes();
+    void BrakesLeft();
+    void BrakesRight();
+    void ParkingBrakes();
+    
+    // Lights
+    void LandingLightsToggle();
+    void LandingLightsOn();
+    void LandingLightsOff();
+    void TaxiLightsToggle();
+    void NavLightsToggle();
+    void BeaconLightsToggle();
+    void StrobeLightsToggle();
+    void PanelLightsToggle();
+    
+    // Radio/Navigation
+    void Com1RadioSet(uint frequency);
+    void Com1StbyRadioSwap();
+    void Com2RadioSet(uint frequency);
+    void Com2StbyRadioSwap();
+    void Nav1RadioSet(uint frequency);
+    void Nav1StbyRadioSwap();
+    void Nav1OBSSet(uint degrees);
+    void Nav2RadioSet(uint frequency);
+    void Nav2StbyRadioSwap();
+    void Nav2OBSSet(uint degrees);
+    
+    // Transponder & ADF
+    void TransponderSet(uint code);
+    void ADF1CompleteSet(uint frequency);
+    
+    // Fuel Systems
+    void FuelPump();
+    void ToggleFuelValveEng1();
+    void ToggleFuelValveEng2();
+    void FuelSelectorSet(uint position);
+    
+    // Electrical
+    void ToggleMasterBattery();
+    void ToggleMasterAlternator();
+    void MasterBatteryOn();
+    void MasterBatteryOff();
+    
+    // Environmental
+    void PitotHeatToggle();
+    void ToggleStructuralDeice();
+    
+    // Simulation Control
+    void PauseToggle();
+    void SimRateSet(uint rate);
+    
     void Trigger(Enum eventEnum, uint data);
 
     uint? RegisterToggleEvent(Enum eventEnum, string eventName);
@@ -82,7 +197,7 @@ public class InvalidEventRegisteredEventArgs : EventArgs
 
 public class AircraftStatus
 {
-    public string Callsign { get; set; }
+    public string Callsign { get; set; } = "";
 
     public double SimTime { get; set; }
     public int? LocalTime { get; set; }
@@ -133,7 +248,7 @@ public class AircraftStatus
 
     public int QNHMbar { get; set; }
 
-    public string Transponder { get; set; }
+    public string Transponder { get; set; } = "";
     public int FreqencyCom1 { get; set; }
     public int FreqencyCom2 { get; set; }
     public bool IsAvMasterOn { get; set; }

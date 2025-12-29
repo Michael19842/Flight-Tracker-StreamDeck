@@ -15,36 +15,36 @@ namespace FlightStreamDeck.Logics.Actions;
 public class GenericToggleSettings
 {
     [JsonProperty(nameof(Header))]
-    public string Header { get; set; }
+    public string Header { get; set; } = "";
 
     [JsonProperty(nameof(ToggleValue))]
-    public string ToggleValue { get; set; }
+    public string ToggleValue { get; set; } = "";
     [JsonProperty(nameof(ToggleValueData))]
-    public string ToggleValueData { get; set; }
+    public string ToggleValueData { get; set; } = "";
 
     [JsonProperty(nameof(HoldValue))]
-    public string HoldValue { get; set; }
+    public string HoldValue { get; set; } = "";
     [JsonProperty(nameof(HoldValueData))]
-    public string HoldValueData { get; set; }
+    public string HoldValueData { get; set; } = "";
     [JsonProperty(nameof(HoldValueRepeat))]
     public bool HoldValueRepeat { get; set; }
     [JsonProperty(nameof(HoldValueSuppressToggle))]
     public bool HoldValueSuppressToggle { get; set; }
 
     [JsonProperty(nameof(FeedbackValue))]
-    public string FeedbackValue { get; set; }
+    public string FeedbackValue { get; set; } = "";
     [JsonProperty(nameof(DisplayValue))]
-    public string DisplayValue { get; set; }
+    public string DisplayValue { get; set; } = "";
     [JsonProperty(nameof(DisplayValueUnit))]
-    public string DisplayValueUnit { get; set; }
+    public string DisplayValueUnit { get; set; } = "";
     [JsonProperty(nameof(DisplayValuePrecision))]
-    public string DisplayValuePrecision { get; set; }
+    public string DisplayValuePrecision { get; set; } = "";
     [JsonProperty(nameof(ImageOn))]
-    public string ImageOn { get; set; }
+    public string ImageOn { get; set; } = "";
     [JsonProperty(nameof(ImageOn_base64))]
     public string? ImageOn_base64 { get; set; }
     [JsonProperty(nameof(ImageOff))]
-    public string ImageOff { get; set; }
+    public string ImageOff { get; set; } = "";
     [JsonProperty(nameof(ImageOff_base64))]
     public string? ImageOff_base64 { get; set; }
     [JsonProperty(nameof(FontSize))]

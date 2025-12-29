@@ -36,7 +36,7 @@ public abstract class NumberDialAction : BaseAction<NumberDialActionSettings>
         {
             if (string.IsNullOrEmpty(NumpadStorage.NumpadParams.Value))
             {
-                NumpadStorage.NumpadParams.Value = NumpadStorage.NumpadParams?.CurrentValue?.Replace(".", "") ?? NumpadStorage.NumpadParams.MinPattern;
+                NumpadStorage.NumpadParams.Value = NumpadStorage.NumpadParams.CurrentValue?.Replace(".", "") ?? NumpadStorage.NumpadParams.MinPattern ?? "";
             }
             switch (args.Action)
             {

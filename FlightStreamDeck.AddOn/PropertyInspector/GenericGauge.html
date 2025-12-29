@@ -4,12 +4,93 @@
     <meta charset="utf-8" />
     <title>Property Inspector</title>
     <link rel="stylesheet" href="css/sdpi.css">
+    <style>
+        .sdpi-helper-container { 
+            position: relative; 
+            display: flex; 
+            align-items: center;
+        }
+        .sdpi-helper-container input {
+            flex: 1;
+            margin-right: 8px;
+            min-width: 0;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+        .sdpi-helper-btn { 
+            background: var(--sdpi-color-bg-lighter);
+            border: 1px solid var(--sdpi-color-border);
+            color: var(--sdpi-color-text);
+            cursor: pointer;
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+        }
+        .sdpi-helper-btn:hover { background: var(--sdpi-color-bg-light); }
+        .sdpi-helper-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 32px;
+            z-index: 1000;
+            background: var(--sdpi-background) !important;
+            border: 1px solid var(--sdpi-bordercolor);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            max-height: 200px;
+            overflow-y: auto;
+            color: var(--sdpi-color);
+        }
+        .sdpi-helper-dropdown option {
+            background: var(--sdpi-background);
+            color: var(--sdpi-color);
+            padding: 4px 8px;
+            border: none;
+        }
+        .sdpi-helper-dropdown option:hover {
+            background: var(--sdpi-bgcolor);
+        }
+        .unit-decimals-container {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+        .unit-decimals-container input:first-child {
+            flex: 2;
+            min-width: 0;
+        }
+        .unit-decimals-container input:last-child {
+            flex: 1;
+            min-width: 80px;
+        }
+        
+        /* Ensure consistent field spacing */
+        .sdpi-item {
+            margin-bottom: 0;
+        }
+        
+        .sdpi-item-label {
+            min-width: 94px;
+            width: 94px;
+            flex-shrink: 0;
+        }
+        
+        .sdpi-item-value {
+            flex: 1;
+            min-width: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="sdpi-wrapper">
         <div class="sdpi-item" type="field">
-            <div class="sdpi-item-label">Toggle value</div>
-            <input class="sdpi-item-value" id="ToggleValue" value="" placeholder="e.g. YAW_DAMPER_TOGGLE" onchange="updateData()" pattern="[A-Z_]">
+            <div class="sdpi-item-label">Toggle value (optional)</div>
+            <div class="sdpi-helper-container sdpi-item-value" style="background-color: #3d3d3d;">
+                <input class="sdpi-item-value" id="ToggleValue" value="" placeholder="e.g. YAW_DAMPER_TOGGLE (optional for display-only)" onchange="updateData()" pattern="[A-Z_]*">
+                <button type="button" class="sdpi-helper-btn" id="ToggleValueHelper" title="Choose from common toggle events">▼</button>
+                <select class="sdpi-helper-dropdown" id="ToggleValueDropdown" style="display: none;"></select>
+            </div>
         </div>
         <div class="sdpi-item" type="field">
             <div class="sdpi-item-label">Type</div>
@@ -24,14 +105,18 @@
         </div>
         <div id="WrapperHideLabelOutsideMinMaxTop">
             <div class="sdpi-item" type="field">
-                <div style="width: 94px; padding: 4px;"></div>
+                <div class="sdpi-item-label"></div>
                 <input class="sdpi-item-value" id="HideLabelOutsideMinMaxTop" type="checkbox" onchange="updateData()">
                 <label for="HideLabelOutsideMinMaxTop"><span></span>Hide if outside Min/Max</label>
             </div>
         </div>
         <div class="sdpi-item" type="field">
             <div id="LabelDisplayValue" class="sdpi-item-label">Display value</div>
-            <input class="sdpi-item-value" id="DisplayValue" value="" placeholder="e.g. INDICATED_ALTITUDE" onchange="updateData()" pattern="[A-Z_]">
+            <div class="sdpi-helper-container sdpi-item-value" style="background-color: #3d3d3d;">
+                <input id="DisplayValue" value="" placeholder="e.g. INDICATED_ALTITUDE" onchange="updateData()" pattern="[A-Z_]*">
+                <button type="button" class="sdpi-helper-btn" id="DisplayValueHelper" title="Choose from SimConnect variables">▼</button>
+                <select class="sdpi-helper-dropdown" id="DisplayValueDropdown" style="display: none;"></select>
+            </div>
         </div>
         <div id="WrapperHeaderBottom">
             <div class="sdpi-item" type="field">
@@ -41,7 +126,7 @@
         </div>
         <div id="WrapperHideLabelOutsideMinMaxBottom">
             <div class="sdpi-item" type="field">
-                <div style="width: 94px; padding: 4px;"></div>
+                <div class="sdpi-item-label"></div>
                 <input class="sdpi-item-value" id="HideLabelOutsideMinMaxBottom" type="checkbox" onchange="updateData()">
                 <label for="HideLabelOutsideMinMaxBottom"><span></span>Hide If Outside Min/Max</label>
             </div>
@@ -49,7 +134,11 @@
         <div id="WrapperDisplayValueBottom">
             <div class="sdpi-item" type="field">
                 <div class="sdpi-item-label">Bottom Display value</div>
-                <input class="sdpi-item-value" id="DisplayValueBottom" placeholder="FUEL_RIGHT_QUANTITY" onchange="updateData()" pattern="[A-Z_]">
+                <div class="sdpi-helper-container sdpi-item-value" style="background-color: #3d3d3d;">
+                    <input class="sdpi-item-value" id="DisplayValueBottom" placeholder="FUEL_RIGHT_QUANTITY" onchange="updateData()" pattern="[A-Z_]*">
+                    <button type="button" class="sdpi-helper-btn" id="DisplayValueBottomHelper" title="Choose from SimConnect variables">▼</button>
+                    <select class="sdpi-helper-dropdown" id="DisplayValueBottomDropdown" style="display: none;"></select>
+                </div>
             </div>
         </div>
         <div class="sdpi-item" type="field">
@@ -62,8 +151,10 @@
         </div>
         <div class="sdpi-item" type="field">
             <div class="sdpi-item-label">Unit & Decimals</div>
-            <input class="sdpi-item-value" id="ValueUnit" value="" placeholder="Empty for default unit" onchange="updateData()" pattern="[A-Z0-9: ]*" style="margin-right: 0">
-            <input class="sdpi-item-value" id="ValuePrecision" value="" placeholder="Default decimals" onchange="updateData()" pattern="[0-9: ]*" style="max-width: 90px">
+            <div class="unit-decimals-container">
+                <input class="sdpi-item-value" id="ValueUnit" value="" placeholder="Empty for default unit" onchange="updateData()" pattern="[A-Z0-9: ]*">
+                <input class="sdpi-item-value" id="ValuePrecision" value="" placeholder="Default decimals" onchange="updateData()" pattern="[0-9: ]*">
+            </div>
         </div>
         <div class="sdpi-item">
             <details class="message caution">
@@ -78,7 +169,11 @@
             </div>
             <div class="sdpi-item" type="field">
                 <div class="sdpi-item-label">Secondary value</div>
-                <input class="sdpi-item-value" id="SubDisplayValue" value="" placeholder="e.g. KOHLSMAN_SETTING_HG" onchange="updateData()" pattern="[A-Z_]">
+                <div class="sdpi-helper-container sdpi-item-value" style="background-color: #3d3d3d;">
+                    <input class="sdpi-item-value" id="SubDisplayValue" value="" placeholder="e.g. KOHLSMAN_SETTING_HG" onchange="updateData()" pattern="[A-Z_]*">
+                    <button type="button" class="sdpi-helper-btn" id="SubDisplayValueHelper" title="Choose from SimConnect variables">▼</button>
+                    <select class="sdpi-helper-dropdown" id="SubDisplayValueDropdown" style="display: none;"></select>
+                </div>
             </div>
         </div>
         <div id="customFields">
@@ -113,6 +208,8 @@
     </div>
 
     <script src="common.js"></script>
+    <script src="toggleEvents.js"></script>
+    <script src="simConnectVariables.js"></script>
     <script language="JavaScript" type="text/javascript">
         function loadSettings(settings) {
             if (settings['Header']) { Header.value = settings['Header'] };
@@ -135,6 +232,78 @@
             if (settings['HideLabelOutsideMinMaxTop']) { HideLabelOutsideMinMaxTop.checked = settings['HideLabelOutsideMinMaxTop'] };
             if (settings['HideLabelOutsideMinMaxBottom']) { HideLabelOutsideMinMaxBottom.checked = settings['HideLabelOutsideMinMaxBottom'] };
             CustomShow()
+            initializeHelpers()
+        }
+
+        function initializeHelpers() {
+            // Initialize toggle value helper
+            if (typeof ToggleEventsData !== 'undefined') {
+                ToggleEventsData.populateSelect(document.getElementById('ToggleValueDropdown'), true);
+                setupHelper('ToggleValue', 'ToggleValueHelper', 'ToggleValueDropdown');
+            }
+
+            // Initialize SimConnect variable helpers
+            if (typeof SimConnectVariablesData !== 'undefined') {
+                SimConnectVariablesData.populateSelect(document.getElementById('DisplayValueDropdown'), true);
+                SimConnectVariablesData.populateSelect(document.getElementById('DisplayValueBottomDropdown'), true);
+                SimConnectVariablesData.populateSelect(document.getElementById('SubDisplayValueDropdown'), true);
+                
+                setupHelper('DisplayValue', 'DisplayValueHelper', 'DisplayValueDropdown');
+                setupHelper('DisplayValueBottom', 'DisplayValueBottomHelper', 'DisplayValueBottomDropdown');
+                setupHelper('SubDisplayValue', 'SubDisplayValueHelper', 'SubDisplayValueDropdown');
+            }
+        }
+
+        function setupHelper(inputId, buttonId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            const dropdown = document.getElementById(dropdownId);
+
+            if (!input || !button || !dropdown) return;
+
+            // Button click handler
+            button.onclick = (e) => {
+                e.preventDefault();
+                const isVisible = dropdown.style.display !== 'none';
+                
+                // Hide all other dropdowns
+                document.querySelectorAll('.sdpi-helper-dropdown').forEach(d => {
+                    if (d !== dropdown) d.style.display = 'none';
+                });
+                
+                dropdown.style.display = isVisible ? 'none' : 'block';
+                if (!isVisible) {
+                    dropdown.focus();
+                }
+            };
+
+            // Simple and direct dropdown handler
+            dropdown.onchange = function() {
+                const selectedValue = this.value;
+                if (selectedValue && selectedValue !== 'SEARCH' && selectedValue !== '') {
+                    input.value = selectedValue;
+                    dropdown.style.display = 'none';
+                    dropdown.selectedIndex = 0; // Reset to default
+                    
+                    // Trigger the input's onchange event to ensure updateData is called
+                    if (input.onchange) {
+                        input.onchange();
+                    } else {
+                        updateData();
+                    }
+                    
+                    // Force a change event on the input field
+                    const changeEvent = new Event('change', { bubbles: true });
+                    input.dispatchEvent(changeEvent);
+                }
+            };
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
         }
 
         function updateData() {

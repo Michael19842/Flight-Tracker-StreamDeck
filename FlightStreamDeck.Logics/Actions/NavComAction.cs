@@ -10,12 +10,12 @@ namespace FlightStreamDeck.Logics.Actions;
 
 public class NavComSettings
 {
-    public string Type { get; set; }
-    public string HoldFunction { get; set; }
-    public string AvionicsValue { get; set; }
-    public string BattMasterValue { get; set; }
+    public string Type { get; set; } = "";
+    public string HoldFunction { get; set; } = "";
+    public string AvionicsValue { get; set; } = "";
+    public string BattMasterValue { get; set; } = "";
     [JsonProperty(nameof(ImageBackground))]
-    public string ImageBackground { get; set; }
+    public string ImageBackground { get; set; } = "";
     [JsonProperty(nameof(ImageBackground_base64))]
     public string? ImageBackground_base64 { get; set; }
 }

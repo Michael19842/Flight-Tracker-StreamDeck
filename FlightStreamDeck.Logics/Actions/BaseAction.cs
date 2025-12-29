@@ -86,6 +86,8 @@ public abstract class BaseAction<TSettings>(RegistrationParameters registrationP
 
     protected virtual Task OnDialLongPress(ActionEventArgs<DialPayload> args) => Task.CompletedTask;
 
+    // TODO: Fix dial methods for newer SharpDeck API
+    /*
     protected override Task OnDialDown(ActionEventArgs<DialPayload> args)
     {
         DialPressStack.Push(args);
@@ -105,6 +107,7 @@ public abstract class BaseAction<TSettings>(RegistrationParameters registrationP
         TryHandleDialPress(OnDialShortPress);
         return Task.CompletedTask;
     }
+    */
 
     private void TryHandleDialPress(Func<ActionEventArgs<DialPayload>, Task> handler)
     {

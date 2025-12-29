@@ -22,6 +22,15 @@ public class SimConnectFlightConnector : IFlightConnector
     IntPtr hSimConnect;
     [DllImport("SimConnect.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
     private static extern int /* HRESULT */ SimConnect_GetLastSentPacketID(IntPtr hSimConnect, out uint /* DWORD */ dwSendID);
+    
+    [DllImport("SimConnect.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+    private static extern int /* HRESULT */ SimConnect_RequestResponseTimes(IntPtr hSimConnect, uint /* DWORD */ nCount, ref float /* FLOAT32 */ fElapsedSeconds);
+    
+    [DllImport("SimConnect.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+    private static extern int /* HRESULT */ SimConnect_InsertString(IntPtr pDest, uint /* DWORD */ cbDest, IntPtr pSrc, uint /* DWORD */ pcbStringV, uint /* DWORD */ pcbString);
+    
+    [DllImport("SimConnect.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+    private static extern int /* HRESULT */ SimConnect_RetrieveString(IntPtr pDest, uint /* DWORD */ cbDest, IntPtr pSrc, ref uint /* DWORD */ pcbStringV, ref uint /* DWORD */ pcbString);
 
     private const int StatusDelayMilliseconds = 100;
 
@@ -142,6 +151,119 @@ public class SimConnectFlightConnector : IFlightConnector
         simconnect.MapClientEventToSimEvent(EVENTS.QNH_DEC, "KOHLSMAN_DEC");
 
         simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_TOGGLE, "AVIONICS_MASTER_SET");
+
+        // Add all the new event mappings for comprehensive SimConnect support
+        simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_MASTER_1_ON, "AVIONICS_MASTER_1_ON");
+        simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_MASTER_1_OFF, "AVIONICS_MASTER_1_OFF");
+        simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_MASTER_2_ON, "AVIONICS_MASTER_2_ON");
+        simconnect.MapClientEventToSimEvent(EVENTS.AVIONICS_MASTER_2_OFF, "AVIONICS_MASTER_2_OFF");
+        
+        // Engine Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.ENGINE_AUTO_START, "ENGINE_AUTO_START");
+        simconnect.MapClientEventToSimEvent(EVENTS.ENGINE_AUTO_SHUTDOWN, "ENGINE_AUTO_SHUTDOWN");
+        
+        // Throttle Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_FULL, "THROTTLE_FULL");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_INCR, "THROTTLE_INCR");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_INCR_SMALL, "THROTTLE_INCR_SMALL");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_DECR, "THROTTLE_DECR");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_DECR_SMALL, "THROTTLE_DECR_SMALL");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_CUT, "THROTTLE_CUT");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE_SET, "THROTTLE_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE1_SET, "THROTTLE1_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE2_SET, "THROTTLE2_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE3_SET, "THROTTLE3_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.THROTTLE4_SET, "THROTTLE4_SET");
+        
+        // Propeller Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.PROP_PITCH_INCR, "PROP_PITCH_INCR");
+        simconnect.MapClientEventToSimEvent(EVENTS.PROP_PITCH_DECR, "PROP_PITCH_DECR");
+        simconnect.MapClientEventToSimEvent(EVENTS.PROP_PITCH_HI, "PROP_PITCH_HI");
+        simconnect.MapClientEventToSimEvent(EVENTS.PROP_PITCH_LO, "PROP_PITCH_LO");
+        simconnect.MapClientEventToSimEvent(EVENTS.PROP_PITCH_SET, "PROP_PITCH_SET");
+        
+        // Mixture Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.MIXTURE_RICH, "MIXTURE_RICH");
+        simconnect.MapClientEventToSimEvent(EVENTS.MIXTURE_LEAN, "MIXTURE_LEAN");
+        simconnect.MapClientEventToSimEvent(EVENTS.MIXTURE_INCR, "MIXTURE_INCR");
+        simconnect.MapClientEventToSimEvent(EVENTS.MIXTURE_DECR, "MIXTURE_DECR");
+        simconnect.MapClientEventToSimEvent(EVENTS.MIXTURE_SET, "MIXTURE_SET");
+        
+        // Magneto Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.MAGNETO_OFF, "MAGNETO_OFF");
+        simconnect.MapClientEventToSimEvent(EVENTS.MAGNETO_RIGHT, "MAGNETO_RIGHT");
+        simconnect.MapClientEventToSimEvent(EVENTS.MAGNETO_LEFT, "MAGNETO_LEFT");
+        simconnect.MapClientEventToSimEvent(EVENTS.MAGNETO_BOTH, "MAGNETO_BOTH");
+        simconnect.MapClientEventToSimEvent(EVENTS.MAGNETO_START, "MAGNETO_START");
+        simconnect.MapClientEventToSimEvent(EVENTS.MAGNETO_SET, "MAGNETO_SET");
+        
+        // Trim Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.ELEV_TRIM_UP, "ELEV_TRIM_UP");
+        simconnect.MapClientEventToSimEvent(EVENTS.ELEV_TRIM_DN, "ELEV_TRIM_DN");
+        simconnect.MapClientEventToSimEvent(EVENTS.ELEV_TRIM_SET, "ELEV_TRIM_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.AILERON_TRIM_LEFT, "AILERON_TRIM_LEFT");
+        simconnect.MapClientEventToSimEvent(EVENTS.AILERON_TRIM_RIGHT, "AILERON_TRIM_RIGHT");
+        simconnect.MapClientEventToSimEvent(EVENTS.RUDDER_TRIM_LEFT, "RUDDER_TRIM_LEFT");
+        simconnect.MapClientEventToSimEvent(EVENTS.RUDDER_TRIM_RIGHT, "RUDDER_TRIM_RIGHT");
+        
+        // Flight Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.FLAPS_UP, "FLAPS_UP");
+        simconnect.MapClientEventToSimEvent(EVENTS.FLAPS_DOWN, "FLAPS_DOWN");
+        simconnect.MapClientEventToSimEvent(EVENTS.FLAPS_SET, "FLAPS_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.GEAR_TOGGLE, "GEAR_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.GEAR_UP, "GEAR_UP");
+        simconnect.MapClientEventToSimEvent(EVENTS.GEAR_DOWN, "GEAR_DOWN");
+        simconnect.MapClientEventToSimEvent(EVENTS.SPOILERS_TOGGLE, "SPOILERS_TOGGLE");
+        
+        // Brakes
+        simconnect.MapClientEventToSimEvent(EVENTS.BRAKES, "BRAKES");
+        simconnect.MapClientEventToSimEvent(EVENTS.BRAKES_LEFT, "BRAKES_LEFT");
+        simconnect.MapClientEventToSimEvent(EVENTS.BRAKES_RIGHT, "BRAKES_RIGHT");
+        simconnect.MapClientEventToSimEvent(EVENTS.PARKING_BRAKES, "PARKING_BRAKES");
+        
+        // Lights
+        simconnect.MapClientEventToSimEvent(EVENTS.LANDING_LIGHTS_TOGGLE, "LANDING_LIGHTS_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.LANDING_LIGHTS_ON, "LANDING_LIGHTS_ON");
+        simconnect.MapClientEventToSimEvent(EVENTS.LANDING_LIGHTS_OFF, "LANDING_LIGHTS_OFF");
+        simconnect.MapClientEventToSimEvent(EVENTS.TAXI_LIGHTS_TOGGLE, "TAXI_LIGHTS_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV_LIGHTS_TOGGLE, "NAV_LIGHTS_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.BEACON_LIGHTS_TOGGLE, "BEACON_LIGHTS_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.STROBE_LIGHTS_TOGGLE, "STROBES_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.PANEL_LIGHTS_TOGGLE, "PANEL_LIGHTS_TOGGLE");
+        
+        // Radio Controls
+        simconnect.MapClientEventToSimEvent(EVENTS.COM1_RADIO_SET, "COM_RADIO_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.COM_STBY_RADIO_SWAP, "COM_STBY_RADIO_SWAP");
+        simconnect.MapClientEventToSimEvent(EVENTS.COM2_RADIO_SET, "COM2_RADIO_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.COM2_STBY_RADIO_SWAP, "COM2_STBY_RADIO_SWAP");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV1_RADIO_SET, "NAV1_RADIO_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV1_STBY_RADIO_SWAP, "NAV1_STBY_RADIO_SWAP");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV1_OBS_SET, "VOR1_OBI_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV2_RADIO_SET, "NAV2_RADIO_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV2_STBY_RADIO_SWAP, "NAV2_STBY_RADIO_SWAP");
+        simconnect.MapClientEventToSimEvent(EVENTS.NAV2_OBS_SET, "VOR2_OBI_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.XPNDR_SET, "XPNDR_SET");
+        simconnect.MapClientEventToSimEvent(EVENTS.ADF_COMPLETE_SET, "ADF_COMPLETE_SET");
+        
+        // Fuel System
+        simconnect.MapClientEventToSimEvent(EVENTS.FUEL_PUMP, "FUEL_PUMP");
+        simconnect.MapClientEventToSimEvent(EVENTS.TOGGLE_FUEL_VALVE_ENG1, "TOGGLE_FUEL_VALVE_ENG1");
+        simconnect.MapClientEventToSimEvent(EVENTS.TOGGLE_FUEL_VALVE_ENG2, "TOGGLE_FUEL_VALVE_ENG2");
+        simconnect.MapClientEventToSimEvent(EVENTS.FUEL_SELECTOR_SET, "FUEL_SELECTOR_SET");
+        
+        // Electrical System
+        simconnect.MapClientEventToSimEvent(EVENTS.TOGGLE_MASTER_BATTERY, "TOGGLE_MASTER_BATTERY");
+        simconnect.MapClientEventToSimEvent(EVENTS.TOGGLE_MASTER_ALTERNATOR, "TOGGLE_MASTER_ALTERNATOR");
+        simconnect.MapClientEventToSimEvent(EVENTS.MASTER_BATTERY_ON, "MASTER_BATTERY_ON");
+        simconnect.MapClientEventToSimEvent(EVENTS.MASTER_BATTERY_OFF, "MASTER_BATTERY_OFF");
+        
+        // Anti-Ice
+        simconnect.MapClientEventToSimEvent(EVENTS.PITOT_HEAT_TOGGLE, "PITOT_HEAT_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.TOGGLE_STRUCTURAL_DEICE, "TOGGLE_STRUCTURAL_DEICE");
+        
+        // Simulation
+        simconnect.MapClientEventToSimEvent(EVENTS.PAUSE_TOGGLE, "PAUSE_TOGGLE");
+        simconnect.MapClientEventToSimEvent(EVENTS.SIM_RATE_SET, "SIM_RATE_SET");
 
         isGenericValueRegistered = false;
         RegisterGenericValues();
@@ -729,6 +851,440 @@ public class SimConnectFlightConnector : IFlightConnector
         logger.LogInformation("Toggle {event} {data}", eventEnum, data);
         SendGenericCommand(eventEnum, data);
     }
+
+    #region New Methods Implementation
+
+    // Avionics Master Controls
+    public void AvionicsMaster1On()
+    {
+        SendCommand(EVENTS.AVIONICS_MASTER_1_ON);
+    }
+
+    public void AvionicsMaster1Off()
+    {
+        SendCommand(EVENTS.AVIONICS_MASTER_1_OFF);
+    }
+
+    public void AvionicsMaster2On()
+    {
+        SendCommand(EVENTS.AVIONICS_MASTER_2_ON);
+    }
+
+    public void AvionicsMaster2Off()
+    {
+        SendCommand(EVENTS.AVIONICS_MASTER_2_OFF);
+    }
+
+    // Engine Controls
+    public void EngineAutoStart()
+    {
+        SendCommand(EVENTS.ENGINE_AUTO_START);
+    }
+
+    public void EngineAutoShutdown()
+    {
+        SendCommand(EVENTS.ENGINE_AUTO_SHUTDOWN);
+    }
+
+    // Throttle Controls
+    public void ThrottleFull()
+    {
+        SendCommand(EVENTS.THROTTLE_FULL);
+    }
+
+    public void ThrottleIncr()
+    {
+        SendCommand(EVENTS.THROTTLE_INCR);
+    }
+
+    public void ThrottleIncrSmall()
+    {
+        SendCommand(EVENTS.THROTTLE_INCR_SMALL);
+    }
+
+    public void ThrottleDecr()
+    {
+        SendCommand(EVENTS.THROTTLE_DECR);
+    }
+
+    public void ThrottleDecrSmall()
+    {
+        SendCommand(EVENTS.THROTTLE_DECR_SMALL);
+    }
+
+    public void ThrottleCut()
+    {
+        SendCommand(EVENTS.THROTTLE_CUT);
+    }
+
+    public void ThrottleSet(uint value)
+    {
+        SendCommand(EVENTS.THROTTLE_SET, value);
+    }
+
+    public void Throttle1Set(uint value)
+    {
+        SendCommand(EVENTS.THROTTLE1_SET, value);
+    }
+
+    public void Throttle2Set(uint value)
+    {
+        SendCommand(EVENTS.THROTTLE2_SET, value);
+    }
+
+    public void Throttle3Set(uint value)
+    {
+        SendCommand(EVENTS.THROTTLE3_SET, value);
+    }
+
+    public void Throttle4Set(uint value)
+    {
+        SendCommand(EVENTS.THROTTLE4_SET, value);
+    }
+
+    // Propeller Controls
+    public void PropPitchIncr()
+    {
+        SendCommand(EVENTS.PROP_PITCH_INCR);
+    }
+
+    public void PropPitchDecr()
+    {
+        SendCommand(EVENTS.PROP_PITCH_DECR);
+    }
+
+    public void PropPitchHi()
+    {
+        SendCommand(EVENTS.PROP_PITCH_HI);
+    }
+
+    public void PropPitchLo()
+    {
+        SendCommand(EVENTS.PROP_PITCH_LO);
+    }
+
+    public void PropPitchSet(uint value)
+    {
+        SendCommand(EVENTS.PROP_PITCH_SET, value);
+    }
+
+    // Mixture Controls
+    public void MixtureRich()
+    {
+        SendCommand(EVENTS.MIXTURE_RICH);
+    }
+
+    public void MixtureLean()
+    {
+        SendCommand(EVENTS.MIXTURE_LEAN);
+    }
+
+    public void MixtureIncr()
+    {
+        SendCommand(EVENTS.MIXTURE_INCR);
+    }
+
+    public void MixtureDecr()
+    {
+        SendCommand(EVENTS.MIXTURE_DECR);
+    }
+
+    public void MixtureSet(uint value)
+    {
+        SendCommand(EVENTS.MIXTURE_SET, value);
+    }
+
+    // Magneto Controls
+    public void MagnetoOff()
+    {
+        SendCommand(EVENTS.MAGNETO_OFF);
+    }
+
+    public void MagnetoRight()
+    {
+        SendCommand(EVENTS.MAGNETO_RIGHT);
+    }
+
+    public void MagnetoLeft()
+    {
+        SendCommand(EVENTS.MAGNETO_LEFT);
+    }
+
+    public void MagnetoBoth()
+    {
+        SendCommand(EVENTS.MAGNETO_BOTH);
+    }
+
+    public void MagnetoStart()
+    {
+        SendCommand(EVENTS.MAGNETO_START);
+    }
+
+    public void MagnetoSet(uint value)
+    {
+        SendCommand(EVENTS.MAGNETO_SET, value);
+    }
+
+    // Trim Controls
+    public void ElevTrimUp()
+    {
+        SendCommand(EVENTS.ELEV_TRIM_UP);
+    }
+
+    public void ElevTrimDown()
+    {
+        SendCommand(EVENTS.ELEV_TRIM_DN);
+    }
+
+    public void ElevTrimSet(uint value)
+    {
+        SendCommand(EVENTS.ELEV_TRIM_SET, value);
+    }
+
+    public void AileronTrimLeft()
+    {
+        SendCommand(EVENTS.AILERON_TRIM_LEFT);
+    }
+
+    public void AileronTrimRight()
+    {
+        SendCommand(EVENTS.AILERON_TRIM_RIGHT);
+    }
+
+    public void RudderTrimLeft()
+    {
+        SendCommand(EVENTS.RUDDER_TRIM_LEFT);
+    }
+
+    public void RudderTrimRight()
+    {
+        SendCommand(EVENTS.RUDDER_TRIM_RIGHT);
+    }
+
+    // Flight Controls
+    public void FlapsUp()
+    {
+        SendCommand(EVENTS.FLAPS_UP);
+    }
+
+    public void FlapsDown()
+    {
+        SendCommand(EVENTS.FLAPS_DOWN);
+    }
+
+    public void FlapsSet(uint value)
+    {
+        SendCommand(EVENTS.FLAPS_SET, value);
+    }
+
+    public void GearToggle()
+    {
+        SendCommand(EVENTS.GEAR_TOGGLE);
+    }
+
+    public void GearUp()
+    {
+        SendCommand(EVENTS.GEAR_UP);
+    }
+
+    public void GearDown()
+    {
+        SendCommand(EVENTS.GEAR_DOWN);
+    }
+
+    public void SpoilersToggle()
+    {
+        SendCommand(EVENTS.SPOILERS_TOGGLE);
+    }
+
+    // Brakes
+    public void Brakes()
+    {
+        SendCommand(EVENTS.BRAKES);
+    }
+
+    public void BrakesLeft()
+    {
+        SendCommand(EVENTS.BRAKES_LEFT);
+    }
+
+    public void BrakesRight()
+    {
+        SendCommand(EVENTS.BRAKES_RIGHT);
+    }
+
+    public void ParkingBrakes()
+    {
+        SendCommand(EVENTS.PARKING_BRAKES);
+    }
+
+    // Lights
+    public void LandingLightsToggle()
+    {
+        SendCommand(EVENTS.LANDING_LIGHTS_TOGGLE);
+    }
+
+    public void LandingLightsOn()
+    {
+        SendCommand(EVENTS.LANDING_LIGHTS_ON);
+    }
+
+    public void LandingLightsOff()
+    {
+        SendCommand(EVENTS.LANDING_LIGHTS_OFF);
+    }
+
+    public void TaxiLightsToggle()
+    {
+        SendCommand(EVENTS.TAXI_LIGHTS_TOGGLE);
+    }
+
+    public void NavLightsToggle()
+    {
+        SendCommand(EVENTS.NAV_LIGHTS_TOGGLE);
+    }
+
+    public void BeaconLightsToggle()
+    {
+        SendCommand(EVENTS.BEACON_LIGHTS_TOGGLE);
+    }
+
+    public void StrobeLightsToggle()
+    {
+        SendCommand(EVENTS.STROBE_LIGHTS_TOGGLE);
+    }
+
+    public void PanelLightsToggle()
+    {
+        SendCommand(EVENTS.PANEL_LIGHTS_TOGGLE);
+    }
+
+    // Radio Controls
+    public void Com1RadioSet(uint frequency)
+    {
+        SendCommand(EVENTS.COM1_RADIO_SET, frequency);
+    }
+
+    public void Com1StbyRadioSwap()
+    {
+        SendCommand(EVENTS.COM_STBY_RADIO_SWAP);
+    }
+
+    public void Com2RadioSet(uint frequency)
+    {
+        SendCommand(EVENTS.COM2_RADIO_SET, frequency);
+    }
+
+    public void Com2StbyRadioSwap()
+    {
+        SendCommand(EVENTS.COM2_STBY_RADIO_SWAP);
+    }
+
+    public void Nav1RadioSet(uint frequency)
+    {
+        SendCommand(EVENTS.NAV1_RADIO_SET, frequency);
+    }
+
+    public void Nav1StbyRadioSwap()
+    {
+        SendCommand(EVENTS.NAV1_STBY_RADIO_SWAP);
+    }
+
+    public void Nav1OBSSet(uint value)
+    {
+        SendCommand(EVENTS.NAV1_OBS_SET, value);
+    }
+
+    public void Nav2RadioSet(uint frequency)
+    {
+        SendCommand(EVENTS.NAV2_RADIO_SET, frequency);
+    }
+
+    public void Nav2StbyRadioSwap()
+    {
+        SendCommand(EVENTS.NAV2_STBY_RADIO_SWAP);
+    }
+
+    public void Nav2OBSSet(uint value)
+    {
+        SendCommand(EVENTS.NAV2_OBS_SET, value);
+    }
+
+    public void TransponderSet(uint code)
+    {
+        SendCommand(EVENTS.XPNDR_SET, code);
+    }
+
+    public void ADF1CompleteSet(uint frequency)
+    {
+        SendCommand(EVENTS.ADF_COMPLETE_SET, frequency);
+    }
+
+    // Fuel System
+    public void FuelPump()
+    {
+        SendCommand(EVENTS.FUEL_PUMP);
+    }
+
+    public void ToggleFuelValveEng1()
+    {
+        SendCommand(EVENTS.TOGGLE_FUEL_VALVE_ENG1);
+    }
+
+    public void ToggleFuelValveEng2()
+    {
+        SendCommand(EVENTS.TOGGLE_FUEL_VALVE_ENG2);
+    }
+
+    public void FuelSelectorSet(uint value)
+    {
+        SendCommand(EVENTS.FUEL_SELECTOR_SET, value);
+    }
+
+    // Electrical System
+    public void ToggleMasterBattery()
+    {
+        SendCommand(EVENTS.TOGGLE_MASTER_BATTERY);
+    }
+
+    public void ToggleMasterAlternator()
+    {
+        SendCommand(EVENTS.TOGGLE_MASTER_ALTERNATOR);
+    }
+
+    public void MasterBatteryOn()
+    {
+        SendCommand(EVENTS.MASTER_BATTERY_ON);
+    }
+
+    public void MasterBatteryOff()
+    {
+        SendCommand(EVENTS.MASTER_BATTERY_OFF);
+    }
+
+    // Anti-Ice
+    public void PitotHeatToggle()
+    {
+        SendCommand(EVENTS.PITOT_HEAT_TOGGLE);
+    }
+
+    public void ToggleStructuralDeice()
+    {
+        SendCommand(EVENTS.TOGGLE_STRUCTURAL_DEICE);
+    }
+
+    // Simulation
+    public void PauseToggle()
+    {
+        SendCommand(EVENTS.PAUSE_TOGGLE);
+    }
+
+    public void SimRateSet(uint rate)
+    {
+        SendCommand(EVENTS.SIM_RATE_SET, rate);
+    }
+
+    #endregion
 
     #endregion
 }

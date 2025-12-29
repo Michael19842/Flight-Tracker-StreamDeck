@@ -9,23 +9,23 @@ namespace FlightStreamDeck.Logics.Actions;
 
 public class GenericGaugeSettings
 {
-    public string Header { get; set; }
-    public string FontSize { get; set; }
-    public string MinValue { get; set; }
-    public string MaxValue { get; set; }
-    public string ToggleValue { get; set; }
-    public string DisplayValue { get; set; }
-    public string SubDisplayValue { get; set; }
-    public string Type { get; set; }
-    public string ValueUnit { get; set; }
-    public string ValuePrecision { get; set; }
-    public string HeaderBottom { get; set; }
-    public string DisplayValueBottom { get; set; }
+    public string Header { get; set; } = "";
+    public string FontSize { get; set; } = "";
+    public string MinValue { get; set; } = "";
+    public string MaxValue { get; set; } = "";
+    public string ToggleValue { get; set; } = "";
+    public string DisplayValue { get; set; } = "";
+    public string SubDisplayValue { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string ValueUnit { get; set; } = "";
+    public string ValuePrecision { get; set; } = "";
+    public string HeaderBottom { get; set; } = "";
+    public string DisplayValueBottom { get; set; } = "";
     public bool DisplayHorizontalValue { get; set; }
-    public string ChartSplitValue { get; set; }
-    public string ChartThicknessValue { get; set; }
-    public string ChartChevronSizeValue { get; set; }
-    public string AbsValText { get; set; }
+    public string ChartSplitValue { get; set; } = "";
+    public string ChartThicknessValue { get; set; } = "";
+    public string ChartChevronSizeValue { get; set; } = "";
+    public string AbsValText { get; set; } = "";
     public bool HideLabelOutsideMinMaxTop { get; set; }
     public bool HideLabelOutsideMinMaxBottom { get; set; }
 
@@ -152,8 +152,10 @@ public class GenericGaugeAction : BaseAction<GenericGaugeSettings>
 
     public override async Task InitializeSettingsAsync(GenericGaugeSettings? settings)
     {
+        if (settings == null) return;
+        
         //keep constructor'd settings if the gauge is newly added.
-        bool emptyPayload = settings?.IsEmptyPayload() == true;
+        bool emptyPayload = settings.IsEmptyPayload();
         if (emptyPayload)
         {
             await UpdatePropertyInspector();
@@ -164,12 +166,12 @@ public class GenericGaugeAction : BaseAction<GenericGaugeSettings>
         }
 
         var newToggleEvent = settings.ToggleValue;
-        var newDisplayValue = simVarManager.GetRegistration(settings.DisplayValue, settings.ValueUnit);
-        var newSubDisplayValue = simVarManager.GetRegistration(settings.SubDisplayValue, settings.ValueUnit);
-        var newDisplayValueBottom = simVarManager.GetRegistration(settings.DisplayValueBottom, settings.ValueUnit);
+        var newDisplayValue = simVarManager.GetRegistration(settings.DisplayValue ?? "", settings.ValueUnit ?? "");
+        var newSubDisplayValue = simVarManager.GetRegistration(settings.SubDisplayValue ?? "", settings.ValueUnit ?? "");
+        var newDisplayValueBottom = simVarManager.GetRegistration(settings.DisplayValueBottom ?? "", settings.ValueUnit ?? "");
 
-        var newMinValue = simVarManager.GetRegistration(settings.MinValue);
-        var newMaxValue = simVarManager.GetRegistration(settings.MaxValue);
+        var newMinValue = simVarManager.GetRegistration(settings.MinValue ?? "");
+        var newMaxValue = simVarManager.GetRegistration(settings.MaxValue ?? "");
 
         if (double.TryParse(string.IsNullOrWhiteSpace(settings.MinValue) ? DefaultSettings.MinValue : settings.MinValue, out var min))
         {
@@ -300,7 +302,7 @@ public class GenericGaugeAction : BaseAction<GenericGaugeSettings>
                     if (displayValue != null || displayValueBottom != null)
                     {
                         var chartSplit = string.IsNullOrEmpty(settings.ChartSplitValue) ? DefaultSettings.ChartSplitValue : settings.ChartSplitValue;
-                        var numberFormat = $"F{KnownVariables.GetDecimals(displayValue?.variableName ?? displayValueBottom?.variableName, customDecimals)}";
+                        var numberFormat = $"F{KnownVariables.GetDecimals(displayValue?.variableName ?? displayValueBottom?.variableName ?? "", customDecimals)}";
 
                         bool.TryParse(settings.AbsValText, out bool absValueText);
 
